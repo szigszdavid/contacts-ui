@@ -42,9 +42,32 @@ export class AuthService {
       this.user.username = username;
       this.user.password = password;
       this.token = loginResponse.access_token;
-      console.log("login",3);
       this.isLoggedIn = true;
       window.localStorage.setItem('token', this.token);
+
+      this.user = await firstValueFrom(this.http.get<User>(`${this.authUrl}/user/name/${username}`))
+      console.log(this.user);
+      
+      
+    } catch (e) {
+      console.log(e);
+      return Promise.reject();
+    }
+  }
+
+  async register(username: string, password: string, fullName : string, privilegesId : number[]): Promise<void> {
+    try {
+      console.log(privilegesId);
+      
+      const loginResponse = await firstValueFrom(this.http
+         .post(`${this.authUrl}/user`, {
+           username,
+           password,
+           fullName,
+           privilegesId
+         }));
+      
+        await this.login(username, password)
     } catch (e) {
       console.log(e);
       return Promise.reject();

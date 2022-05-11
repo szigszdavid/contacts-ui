@@ -1,0 +1,41 @@
+<div class="container">
+    <h2>Register</h2>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div *ngIf="message">{{ message }}</div>
+
+        <div class="form-group">
+            <label for="username">Email</label>
+            <input type="text" class="form-control" id="username" placeholder="E-mail" required
+                formControlName="username"
+                [class.is-invalid]="username.invalid && (username.dirty || username.touched)" />
+            <div class="invalid-feedback">Please provide a username!</div>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" placeholder="Password" required
+                formControlName="password"
+                [class.is-invalid]="password.invalid && (password.dirty || password.touched)" />
+            <div class="invalid-feedback">Please provide a password!</div>
+        </div>
+
+        <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input type="text" class="form-control" id="fullName" required formControlName="fullName"
+                [class.is-invalid]="fullName.invalid && (fullName.dirty || fullName.touched)" />
+            <div class="invalid-feedback">Please provide a fullname!</div>
+        </div>
+
+
+        <div class="form-group">
+            <label for="privileges">privileges: </label>
+            <div *ngFor="let privilege of privileges; let i=index">
+                <input type="checkbox" formArrayName="selectedPrivileges" [value]="privilege.value"
+                    (change)="onCheckboxChange($event)" />
+                {{ privilege.name}}
+            </div>
+            <div class="invalid-feedback">Please provide a privileges!</div>
+        </div>
+        <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Submit</button>
+    </form>
+</div>

@@ -6,6 +6,7 @@ import { AdminComponent } from './components/admin/admin.component';
 import { EditContactComponent } from './edit-contact/edit-contact.component';
 import { GetContactByIdComponent } from './get-contact-by-id/get-contact-by-id.component';
 import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
 
 const routes: Routes = [
   {
@@ -31,6 +32,10 @@ const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
+  },
+  {
+    path: 'register',
+    component: RegisterComponent,
   },
 ];
 
