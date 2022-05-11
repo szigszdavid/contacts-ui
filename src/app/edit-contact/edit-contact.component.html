@@ -1,0 +1,4 @@
+<div class="container">
+    <h2 class="display-2 my-3">{{ contact.id ? "Edit contasct" : "New contact" }}</h2>
+    <app-add-contact [contact]="contact" (save)="handleSave($event)"></app-add-contact>
+  </div>

@@ -1,0 +1,28 @@
+<div class="container">
+  <h2 class="display-2 my-3">Contacts</h2>
+  <p>
+    <a class="btn btn-primary" routerLink="/contacts/add" role="button">New contact</a>
+  </p>
+  <table class="table table-bordered table-inverse">
+    <tr>
+      <th>FullName</th>
+      <th>Email</th>
+      <th>Phone number</th>
+      <th class="text-right">Company</th>
+    </tr>
+    <tr *ngFor="let contact of contacts">
+      <td>
+        {{contact.fullName}}
+      </td>
+      <td>
+        {{contact.emailAddress}}
+      </td>
+      <td>
+        {{contact.phoneNumber}}
+      </td>
+      <td class="text-right">
+        {{contact.company.name}}
+      </td>
+    </tr>
+  </table>
+</div>

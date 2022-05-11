@@ -1,0 +1,34 @@
+<div class="container">
+    <div *ngIf="contact === null">
+        <h1>No conatct found</h1>
+    </div>
+    <h2 class="display-2 my-3">Details</h2>
+    <dl class="row">
+  
+      <dt class="col-sm-3">FirstName</dt>
+      <dd class="col-sm-9">{{ contact.firstName }}</dd>
+
+      <dt class="col-sm-3">LastName</dt>
+      <dd class="col-sm-9">{{ contact.lastName }}</dd>
+  
+      <dt class="col-sm-3">PhoneNumber</dt>
+      <dd class="col-sm-9">{{ contact.phoneNumber }}</dd>
+  
+      <dt class="col-sm-3">Email Address</dt>
+      <dd class="col-sm-9">{{ contact.emailAddress }}</dd>
+  
+      <dt class="col-sm-3">Status</dt>
+      <dd class="col-sm-9">{{ contact.status }}</dd>
+  
+      <dt class="col-sm-3">Comment</dt>
+      <dd class="col-sm-9">{{ contact.comment }}</dd>
+
+      <dt class="col-sm-3">Company</dt>
+      <dd class="col-sm-9">{{ contact.company.name }}</dd>
+  
+      </dl>
+      <p>
+        <a class="btn btn-primary" [routerLink]="['/contacts', contact.id, 'edit']" role="button">Edit</a>
+        <button class="btn btn-outline-danger" role="button" (click)="handleDelete()">Delete</button>
+      </p>
+  </div>

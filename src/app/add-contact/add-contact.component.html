@@ -1,0 +1,47 @@
+{{ contactForm.value | json }}
+<form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+        <label for="title">FirstName</label>
+        <input type="text" class="form-control" id="firstName" placeholder="FirstName" required
+            formControlName="firstName" [class.is-invalid]="firstName.invalid && (firstName.dirty || firstName.touched)"
+            [class.is-valid]="firstName.valid" />
+        <div class="invalid-feedback">Please provide FirstName!</div>
+    </div>
+    <div class="form-group">
+        <label for="title">LastName:</label>
+        <input type="text" class="form-control" id="lastName" placeholder="LastName" required formControlName="lastName"
+            [class.is-invalid]="lastName.invalid && (lastName.dirty || lastName.touched)"
+            [class.is-valid]="lastName.valid" />
+        <div class="invalid-feedback">Please provide a LastName!</div>
+    </div>
+    <div class="form-group">
+        <label for="title">Phone number: </label>
+        <input type="text" class="form-control" id="phoneNumber" placeholder="Phone number" required
+            formControlName="phoneNumber"
+            [class.is-invalid]="phoneNumber.invalid && (phoneNumber.dirty || phoneNumber.touched)"
+            [class.is-valid]="phoneNumber.valid" />
+        <div class="invalid-feedback">Please provide a Phone number!</div>
+    </div>
+    <div class="form-group">
+        <label for="title">Email address: </label>
+        <input type="text" class="form-control" id="emailAddress" placeholder="Email address" required
+            formControlName="emailAddress"
+            [class.is-invalid]="emailAddress.invalid && (emailAddress.dirty || emailAddress.touched)"
+            [class.is-valid]="emailAddress.valid" />
+        <div class="invalid-feedback">Please provide an Email address!</div>
+    </div>
+    
+    <div class="form-group">
+        <label for="companyId">companyId: </label>
+        <select class="form-control" id="companyId" required formControlName="companyId"
+            [class.is-invalid]="companyId.invalid && (companyId.dirty || companyId.touched)"
+            [class.is-valid]="companyId.valid">
+            <option value="1">Company #1</option>
+            <option value="2">Company #2</option>
+            <option value="3">Company #3</option>
+        </select>
+        <div class="invalid-feedback">Please provide a companyId!</div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="contactForm.invalid">Submit</button>
+</form>
