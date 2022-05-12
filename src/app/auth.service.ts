@@ -2,10 +2,19 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { User } from 'src/User';
+import jwt_decode from 'jwt-decode';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 interface LoginResponse {
-  access_token : string;
-  refresh_token : string;
+  access_token: string;
+  refresh_token: string;
+}
+
+interface AccessInterface {
+  sub: string;
+  privileges: string[];
+  iss: string;
+  exp: number;
 }
 
 @Injectable({
@@ -14,48 +23,53 @@ interface LoginResponse {
 export class AuthService {
   isLoggedIn = false;
   userPrivileges = {
-    hasList : false,
-    hasCreate : false,
-    hasModify : false,
-    hasDelete : false,
+    hasList: false,
+    hasCreate: false,
+    hasModify: false,
+    hasDelete: false,
   }
   token: string;
   user = new User();
   redirectUrl: string;
   authUrl = 'http://localhost:8080';
-
+  helper
+  
   constructor(private http: HttpClient) {
     const token = window.localStorage.getItem('token');
     if (token) {
       this.token = token;
       this.isLoggedIn = true;
     }
+    this.helper = new JwtHelperService();
     this.setPrivileges()
   }
 
-  async setPrivileges()
-  {
-    
+  async setPrivileges() {
+
     if (localStorage.getItem("user") !== null) {
       this.user = JSON.parse(localStorage.getItem("user")!)
-      
 
-      if(this.user.privileges.filter(privilege => privilege.id == 1).length !== 0)
-      {
+
+      if (this.user.privileges.filter(privilege => privilege === "LIST").length !== 0) {
         this.userPrivileges.hasList = true;
       }
-      if(this.user.privileges.filter(privilege => privilege.id == 2).length !== 0)
-      {
+      if (this.user.privileges.filter(privilege => privilege === "CREATE").length !== 0) {
         this.userPrivileges.hasCreate = true;
       }
-      if(this.user.privileges.filter(privilege => privilege.id == 3).length !== 0)
-      {
+      if (this.user.privileges.filter(privilege => privilege === "MODIFY").length !== 0) {
         this.userPrivileges.hasModify = true;
       }
-      if(this.user.privileges.filter(privilege => privilege.id == 4).length !== 0)
-      {
+      if (this.user.privileges.filter(privilege => privilege === "DELETE").length !== 0) {
         this.userPrivileges.hasDelete = true;
       }
+    }
+  }
+
+  async getDecodedAccessToken<AccessInterface>(token: string) {
+    try {
+      return jwt_decode(token);
+    } catch (Error) {
+      return null;
     }
   }
 
@@ -64,61 +78,55 @@ export class AuthService {
       const formData = new FormData();
       formData.append('username', username);
       formData.append('password', password);
-      console.log("login",formData);
-      
+      console.log("login", formData);
+
       const loginResponse = await firstValueFrom(this.http
-         .post<LoginResponse>(`${this.authUrl}/login`, formData));
-         console.log("login");
+        .post<LoginResponse>(`${this.authUrl}/login`, formData));
+      console.log("login");
       console.log(this.user, username);
       console.log(loginResponse);
-      
+
       this.user.username = username;
       this.token = loginResponse.access_token;
       this.isLoggedIn = true;
       window.localStorage.setItem('token', this.token);
 
-      this.user = await firstValueFrom(this.http.get<User>(`${this.authUrl}/user/name/${username}`))
+      const decodedToken = this.helper.decodeToken(loginResponse.access_token);
+
+      console.log("decoded",decodedToken);
+      
+
+      this.user.fullName = decodedToken.fullName;
+      this.user.username = decodedToken.sub;
+      this.user.privileges = decodedToken.privileges;
 
       window.localStorage.setItem("user", JSON.stringify(this.user))
 
       console.log(this.user);
+      console.log(this.user.privileges);
       
-      if(this.user.privileges.filter(privilege => privilege.id == 1).length !== 0)
-      {
-        this.userPrivileges.hasList = true;
-      }
-      if(this.user.privileges.filter(privilege => privilege.id == 2).length !== 0)
-      {
-        this.userPrivileges.hasCreate = true;
-      }
-      if(this.user.privileges.filter(privilege => privilege.id == 3).length !== 0)
-      {
-        this.userPrivileges.hasModify = true;
-      }
-      if(this.user.privileges.filter(privilege => privilege.id == 4).length !== 0)
-      {
-        this.userPrivileges.hasDelete = true;
-      }
+      await this.setPrivileges()
 
     } catch (e) {
       console.log(e);
       return Promise.reject();
     }
+
   }
 
-  async register(username: string, password: string, fullName : string, privilegesId : number[]): Promise<void> {
+  async register(username: string, password: string, fullName: string, privilegesId: number[]): Promise<void> {
     try {
       console.log(privilegesId);
-      
+
       const loginResponse = await firstValueFrom(this.http
-         .post(`${this.authUrl}/user`, {
-           username,
-           password,
-           fullName,
-           privilegesId
-         }));
-      
-        await this.login(username, password)
+        .post(`${this.authUrl}/user`, {
+          username,
+          password,
+          fullName,
+          privilegesId
+        }));
+
+      await this.login(username, password)
     } catch (e) {
       console.log(e);
       return Promise.reject();
@@ -137,5 +145,5 @@ export class AuthService {
     this.userPrivileges.hasList = false;
     this.userPrivileges.hasModify = false;
   }
-  
+
 }
