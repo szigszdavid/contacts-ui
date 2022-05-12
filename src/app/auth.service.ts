@@ -13,6 +13,12 @@ interface LoginResponse {
 })
 export class AuthService {
   isLoggedIn = false;
+  userPrivileges = {
+    hasList : false,
+    hasCreate : false,
+    hasModify : false,
+    hasDelete : false,
+  }
   token: string;
   user = new User();
   redirectUrl: string;
@@ -23,6 +29,33 @@ export class AuthService {
     if (token) {
       this.token = token;
       this.isLoggedIn = true;
+    }
+    this.setPrivileges()
+  }
+
+  async setPrivileges()
+  {
+    
+    if (localStorage.getItem("user") !== null) {
+      this.user = JSON.parse(localStorage.getItem("user")!)
+      
+
+      if(this.user.privileges.filter(privilege => privilege.id == 1).length !== 0)
+      {
+        this.userPrivileges.hasList = true;
+      }
+      if(this.user.privileges.filter(privilege => privilege.id == 2).length !== 0)
+      {
+        this.userPrivileges.hasCreate = true;
+      }
+      if(this.user.privileges.filter(privilege => privilege.id == 3).length !== 0)
+      {
+        this.userPrivileges.hasModify = true;
+      }
+      if(this.user.privileges.filter(privilege => privilege.id == 4).length !== 0)
+      {
+        this.userPrivileges.hasDelete = true;
+      }
     }
   }
 
@@ -40,15 +73,33 @@ export class AuthService {
       console.log(loginResponse);
       
       this.user.username = username;
-      this.user.password = password;
       this.token = loginResponse.access_token;
       this.isLoggedIn = true;
       window.localStorage.setItem('token', this.token);
 
       this.user = await firstValueFrom(this.http.get<User>(`${this.authUrl}/user/name/${username}`))
+
+      window.localStorage.setItem("user", JSON.stringify(this.user))
+
       console.log(this.user);
       
-      
+      if(this.user.privileges.filter(privilege => privilege.id == 1).length !== 0)
+      {
+        this.userPrivileges.hasList = true;
+      }
+      if(this.user.privileges.filter(privilege => privilege.id == 2).length !== 0)
+      {
+        this.userPrivileges.hasCreate = true;
+      }
+      if(this.user.privileges.filter(privilege => privilege.id == 3).length !== 0)
+      {
+        this.userPrivileges.hasModify = true;
+      }
+      if(this.user.privileges.filter(privilege => privilege.id == 4).length !== 0)
+      {
+        this.userPrivileges.hasDelete = true;
+      }
+
     } catch (e) {
       console.log(e);
       return Promise.reject();
@@ -79,7 +130,12 @@ export class AuthService {
     this.isLoggedIn = false;
     this.token = "";
     window.localStorage.removeItem('token');
+    window.localStorage.removeItem('user');
     this.redirectUrl = "";
+    this.userPrivileges.hasCreate = false;
+    this.userPrivileges.hasDelete = false;
+    this.userPrivileges.hasList = false;
+    this.userPrivileges.hasModify = false;
   }
   
 }

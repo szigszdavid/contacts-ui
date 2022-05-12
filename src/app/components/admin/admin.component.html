@@ -1,7 +1,8 @@
 <div class="container">
   <h2 class="display-2 my-3">Contacts</h2>
   <p>
-    <a class="btn btn-primary" routerLink="/contacts/add" role="button">New contact</a>
+    <a class="btn btn-primary" routerLink="/contacts/add" role="button" *ngIf="authService.userPrivileges.hasCreate">New
+      contact</a>
   </p>
   <table class="table table-bordered table-inverse">
     <tr>
@@ -12,7 +13,9 @@
     </tr>
     <tr *ngFor="let contact of contacts">
       <td>
-        <a [routerLink]="['/contacts', contact.id]">{{contact.fullName}}</a>
+        <div *ngIf="authService.userPrivileges.hasList; then thenBlock else elseBlock"></div>
+        <ng-template #thenBlock><a [routerLink]="['/contacts', contact.id]">{{contact.fullName}}</a></ng-template>
+        <ng-template #elseBlock>{{contact.fullName}}</ng-template>
       </td>
       <td>
         {{contact.emailAddress}}

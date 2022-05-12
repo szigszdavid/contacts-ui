@@ -28,7 +28,7 @@
   
       </dl>
       <p>
-        <a class="btn btn-primary" [routerLink]="['/contacts', contact.id, 'edit']" role="button">Edit</a>
-        <button class="btn btn-outline-danger" role="button" (click)="handleDelete()">Delete</button>
+        <a class="btn btn-primary" [routerLink]="['/contacts', contact.id, 'edit']" role="button" *ngIf="authService.userPrivileges.hasModify">Edit</a>
+        <button class="btn btn-outline-danger" role="button" (click)="handleDelete()" *ngIf="authService.userPrivileges.hasDelete">Delete</button>
       </p>
   </div>

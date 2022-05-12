@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Contact } from 'src/Contact';
 import { GetByIdRequest } from "src/GetByIdRequest";
+import { AuthService } from '../auth.service';
 import { ContactsService } from '../services/contacts.service';
 
 @Component({
@@ -13,7 +14,7 @@ export class GetContactByIdComponent implements OnInit {
 
   contact = new GetByIdRequest();
 
-  constructor(private contactsService : ContactsService, private route : ActivatedRoute, private router: Router) { }
+  constructor(private contactsService : ContactsService, private route : ActivatedRoute, private router: Router, public authService : AuthService) { }
 
   async ngOnInit(): Promise<void> {
 
