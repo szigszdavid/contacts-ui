@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -9,7 +10,7 @@ import { AuthService } from '../auth.service';
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent implements OnInit {
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {}
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router, private location : Location) {}
 
   form = this.fb.group({
     username: ['', [Validators.required]],
@@ -28,18 +29,14 @@ export class LoginComponent implements OnInit {
 
   async onSubmit(): Promise<void> {
     try {
-      console.log(0);
       
       await this.authService.login(this.username.value, this.password.value);
-      console.log(this.password.value);
       
       if (this.authService.redirectUrl) {
-        console.log(1);
         this.router.navigate([this.authService.redirectUrl]);
         
       } else {
-        console.log(2);
-        this.router.navigate(['/contacts']);
+        this.location.back();
       }
     } catch (e) {
       this.message = 'Cannot log in!';

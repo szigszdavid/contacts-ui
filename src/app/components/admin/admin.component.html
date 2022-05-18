@@ -1,31 +1,90 @@
 <div class="container">
   <h2 class="display-2 my-3">Contacts</h2>
-  <p>
-    <a class="btn btn-primary" routerLink="/contacts/add" role="button" *ngIf="authService.userPrivileges.hasCreate">New
-      contact</a>
+  <div class="d-flex justify-content-between">
+    <p>
+    <a
+      class="btn btn-primary"
+      routerLink="/contacts/add"
+      role="button"
+      *ngIf="authService.userPrivileges.hasCreate"
+      >New contact</a
+    >
   </p>
+  <ngb-pagination
+    [collectionSize]="40"
+    [(page)]="page"
+    aria-label="Custom pagination"
+    (pageChange)="handlePageChange()"
+    class="d-flex justify-content-center"
+  >
+    <ng-template ngbPaginationPrevious>Prev</ng-template>
+    <ng-template ngbPaginationNext>Next</ng-template>
+    <ng-template ngbPaginationNumber let-p>{{ getPageSymbol(p) }}</ng-template>
+  </ngb-pagination>
+  <div>
+    <input  [(ngModel)]="inputData" type="text" class="form-control" placeholder="Search by username" (ngModelChange)="setValue($event)" >
+  </div>
+  <div>
+    <select id="companySelect" [(ngModel)]="companyInputData" class="form-control" (ngModelChange)="searchCompany($event)">
+            <option value="0">All</option>
+            <option value="1">Company #1</option>
+            <option value="2">Company #2</option>
+            <option value="3">Company #3</option>
+    </select>
+  </div>
+  </div>
   <table class="table table-bordered table-inverse">
     <tr>
       <th>FullName</th>
       <th>Email</th>
       <th>Phone number</th>
       <th class="text-right">Company</th>
+      <th></th>
+      <th></th>
     </tr>
     <tr *ngFor="let contact of contacts">
       <td>
-        <div *ngIf="authService.userPrivileges.hasList; then thenBlock else elseBlock"></div>
-        <ng-template #thenBlock><a [routerLink]="['/contacts', contact.id]">{{contact.fullName}}</a></ng-template>
-        <ng-template #elseBlock>{{contact.fullName}}</ng-template>
+        <div
+          *ngIf="
+            authService.userPrivileges.hasList;
+            then thenBlock;
+            else elseBlock
+          "
+        ></div>
+        <ng-template #thenBlock
+          ><a [routerLink]="['/contacts', contact.id]">{{
+            contact.fullName
+          }}</a></ng-template
+        >
+        <ng-template #elseBlock>{{ contact.fullName }}</ng-template>
       </td>
       <td>
-        {{contact.emailAddress}}
+        {{ contact.emailAddress }}
       </td>
       <td>
-        {{contact.phoneNumber}}
+        {{ contact.phoneNumber }}
       </td>
       <td class="text-right">
-        {{contact.company.name}}
+        {{ contact.company.name }}
+      </td>
+      <td>
+        <button role="button" class="btn btn-warning bg-warning" [routerLink]="['/contacts', contact.id, 'edit']" role="button" *ngIf="authService.userPrivileges.hasModify" >Edit</button>
+      </td>
+      <td>
+        <button class="btn btn-danger bg-danger" role="button" (click)="handleDelete(contact.id)" *ngIf="authService.userPrivileges.hasDelete">Delete</button>
       </td>
     </tr>
   </table>
+  <ngb-pagination
+    [collectionSize]="40"
+    [(page)]="page"
+    aria-label="Custom pagination"
+    (pageChange)="handlePageChange()"
+    class="d-flex justify-content-center"
+  >
+    <ng-template ngbPaginationPrevious>Prev</ng-template>
+    <ng-template ngbPaginationNext>Next</ng-template>
+    <ng-template ngbPaginationNumber let-p>{{ getPageSymbol(p) }}</ng-template>
+  </ngb-pagination>
+  <hr />
 </div>

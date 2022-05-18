@@ -95,8 +95,10 @@ export class AuthService {
 
       console.log("decoded",decodedToken);
       
+      const user = await firstValueFrom(this.http
+        .get<User>(`${this.authUrl}/user/name/${decodedToken.sub}`));
 
-      this.user.fullName = decodedToken.fullName;
+      this.user.fullName = user.fullName;
       this.user.username = decodedToken.sub;
       this.user.privileges = decodedToken.privileges;
 

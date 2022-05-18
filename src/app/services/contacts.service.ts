@@ -25,9 +25,11 @@ export class ContactsService {
   }
 
 
-  public async getContacts(): Promise<Contact[]> 
+  public getContacts(): Promise<Contact[]> 
   {
-    return await firstValueFrom(this.http.get<Contact[]>(this.contactUrl,{params : this.params}));
+    console.log(this.params);
+    
+    return firstValueFrom(this.http.get<Contact[]>(this.contactUrl,{params : this.params}));
   }
 
   public getContactById(id : number) : Promise<GetByIdRequest>
@@ -45,5 +47,15 @@ export class ContactsService {
 
   public deleteIssue(id: number): Promise<Contact> {
     return firstValueFrom(this.http.delete<Contact>(`${this.contactUrl}/${id}`,httpOptions));
+  }
+
+  public getSearchResultForNames() : Promise<Contact[]>
+  {
+    return firstValueFrom(this.http.get<Contact[]>(this.contactUrl+"/search/name",{params : this.params}));
+  }
+
+  public getSearchResultForCompany() : Promise<Contact[]>
+  {
+    return firstValueFrom(this.http.get<Contact[]>(this.contactUrl+"/search/company",{params : this.params}));
   }
 }

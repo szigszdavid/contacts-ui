@@ -23,7 +23,6 @@ export class GetContactByIdComponent implements OnInit {
   }
 
   public async handleDelete(): Promise<void> {
-    console.log("DELETE");
     await this.contactsService.deleteIssue(this.contact.id);
     this.router.navigate(['/contacts']);
   }
