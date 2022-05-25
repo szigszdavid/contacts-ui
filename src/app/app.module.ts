@@ -14,6 +14,16 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthInterceptor } from './auth.interceptor';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import {MatSortModule} from '@angular/material/sort';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NZ_I18N } from 'ng-zorro-antd/i18n';
+import { en_US } from 'ng-zorro-antd/i18n';
+import { registerLocaleData } from '@angular/common';
+import en from '@angular/common/locales/en';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+registerLocaleData(en);
+
 
 @NgModule({
   declarations: [
@@ -31,13 +41,16 @@ import { RegisterComponent } from './register/register.component';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    NgbModule
+    NgbModule,
+    MatSortModule,
+    BrowserAnimationsModule,
+    NzIconModule
   ],
   providers: [ContactsService, {
     provide: HTTP_INTERCEPTORS,
     useClass: AuthInterceptor,
     multi: true,
-  },],
+  }, { provide: NZ_I18N, useValue: en_US },],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

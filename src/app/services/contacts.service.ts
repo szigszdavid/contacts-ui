@@ -5,6 +5,7 @@ import { Contact } from "../../Contact";
 import { GetByIdRequest } from "src/GetByIdRequest";
 import { CreateContactRequestBody } from 'src/CreateContactRequestBody';
 import { ActivatedRoute, Params } from '@angular/router';
+import { ContactsWithNumberOfAllContacts } from 'src/ContactsWithNumberOfAllContacts';
 
 const httpOptions = {
   headers : new HttpHeaders({'Content-Type' : "application/json" 
@@ -25,11 +26,9 @@ export class ContactsService {
   }
 
 
-  public getContacts(): Promise<Contact[]> 
+  public getContacts(): Promise<ContactsWithNumberOfAllContacts> 
   {
-    console.log(this.params);
-    
-    return firstValueFrom(this.http.get<Contact[]>(this.contactUrl,{params : this.params}));
+    return firstValueFrom(this.http.get<ContactsWithNumberOfAllContacts>(this.contactUrl,{params : this.params}));
   }
 
   public getContactById(id : number) : Promise<GetByIdRequest>
@@ -49,13 +48,14 @@ export class ContactsService {
     return firstValueFrom(this.http.delete<Contact>(`${this.contactUrl}/${id}`,httpOptions));
   }
 
-  public getSearchResultForNames() : Promise<Contact[]>
+  public getSearchResultForNames() : Promise<ContactsWithNumberOfAllContacts>
   {
-    return firstValueFrom(this.http.get<Contact[]>(this.contactUrl+"/search/name",{params : this.params}));
+    return firstValueFrom(this.http.get<ContactsWithNumberOfAllContacts>(this.contactUrl+"/search/name",{params : this.params}));
   }
 
-  public getSearchResultForCompany() : Promise<Contact[]>
+  public getSearchResultForCompany() : Promise<ContactsWithNumberOfAllContacts>
   {
-    return firstValueFrom(this.http.get<Contact[]>(this.contactUrl+"/search/company",{params : this.params}));
+    return firstValueFrom(this.http.get<ContactsWithNumberOfAllContacts>(this.contactUrl+"/search/company",{params : this.params}));
   }
+
 }

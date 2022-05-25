@@ -4,6 +4,9 @@ import { Contact } from '../../../Contact';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/auth.service';
 import { CursorError } from '@angular/compiler/src/ml_parser/lexer';
+import { ContactsWithNumberOfAllContacts } from 'src/ContactsWithNumberOfAllContacts';
+import { async } from 'rxjs';
+
 
 @Component({
   selector: 'app-admin',
@@ -11,8 +14,11 @@ import { CursorError } from '@angular/compiler/src/ml_parser/lexer';
   styleUrls: ['./admin.component.css'],
 })
 export class AdminComponent implements OnInit {
-  public contacts: Contact[] = [];
+  public contactsObject: ContactsWithNumberOfAllContacts;
   page = 0;
+  fullNameSort = 'ASC'
+  emailSort = "ASC"
+  companySort = "ASC"
 
   @Input()
   inputData: string = '';
@@ -24,8 +30,8 @@ export class AdminComponent implements OnInit {
     await this.router.navigate(['/contacts/'], {
       queryParams: { page: this.page - 1, name: this.inputData },
     });
-    this.contacts = await this.contactsService.getSearchResultForNames();
-    console.log(this.contacts);
+    this.contactsObject = await this.contactsService.getSearchResultForNames();
+    
   }
 
   async searchCompany(companyId : string)
@@ -36,44 +42,47 @@ export class AdminComponent implements OnInit {
     await this.router.navigate(['/contacts/'], {
       queryParams: { page: this.page - 1, companyId: this.companyInputData },
     });
-    this.contacts = await this.contactsService.getSearchResultForCompany();
+    this.contactsObject = await this.contactsService.getSearchResultForCompany();
   }
 
   constructor(
     private contactsService: ContactsService,
     private route: ActivatedRoute,
     private router: Router,
-    public authService: AuthService
-  ) {}
+    public authService: AuthService,
+    
+  ) {
+    
+  }
 
   async ngOnInit(): Promise<void> {
-    this.contacts = await this.contactsService.getContacts();
+    this.contactsObject = await this.contactsService.getContacts();  
   }
 
   getPageSymbol(current: number) {
-    return ['1', '2', '3', '4'][current - 1];
+    return current;
   }
 
   async handlePageChange() {
     if (this.inputData === '' && this.companyInputData === "") {
       await this.router.navigate(['/contacts/'], {
-        queryParams: { page: this.page - 1 },
+        queryParams: { page: this.page - 1, orderway: this.fullNameSort == "ASC" ? null : this.fullNameSort},
       });
-      this.contacts = await this.contactsService.getContacts();
+      this.contactsObject = await this.contactsService.getContacts();
     }
     else if (this.inputData === '' && this.companyInputData !== "") {
       console.log("dafsg", this.companyInputData);
       await this.router.navigate(['/contacts/'], {
         queryParams: { page: this.page - 1, companyId : this.companyInputData },
       });
-      this.contacts = await this.contactsService.getSearchResultForCompany();
+      this.contactsObject = await this.contactsService.getSearchResultForCompany();
     }
     else if(this.inputData !== '' && this.companyInputData == "")
     {
       await this.router.navigate(['/contacts/'], {
         queryParams: { page: this.page - 1, name: this.inputData },
       });
-      this.contacts = await this.contactsService.getSearchResultForNames();
+      this.contactsObject = await this.contactsService.getSearchResultForNames();
     }
   }
 
@@ -82,5 +91,70 @@ export class AdminComponent implements OnInit {
 
     await this.contactsService.deleteIssue(id);
     this.handlePageChange();
+  }
+
+  async fullNameChangeSort()
+  {
+    
+    if(this.fullNameSort === 'ASC')
+    {
+      this.fullNameSort = 'desc'
+      await this.router.navigate(['/contacts/'], {
+        queryParams: { page: this.page - 1, orderway: this.fullNameSort },
+      });
+      this.contactsObject = await this.contactsService.getContacts();
+    }
+    else
+    {
+      this.fullNameSort = 'ASC'
+      await this.router.navigate(['/contacts/'], {
+        queryParams: { page: this.page - 1},
+      });
+      this.contactsObject = await this.contactsService.getContacts();
+    }
+  }
+
+  async emailChangeSort()
+  {
+    console.log("hello");
+    
+    if(this.emailSort === 'ASC')
+    {
+      this.emailSort = 'desc'
+      await this.router.navigate(['/contacts/'], {
+        queryParams: { page: this.page - 1, orderway: this.emailSort, orderby: "emailaddress" },
+      });
+      this.contactsObject = await this.contactsService.getContacts();
+    }
+    else
+    {
+      this.emailSort = 'ASC'
+      await this.router.navigate(['/contacts/'], {
+        queryParams: { page: this.page - 1, orderby: "emailaddress" },
+      });
+      this.contactsObject = await this.contactsService.getContacts();
+    }
+  }
+
+  async companyChangeSort()
+  {
+    console.log("hello");
+    
+    if(this.companySort === 'ASC')
+    {
+      this.companySort = 'desc'
+      await this.router.navigate(['/contacts/'], {
+        queryParams: { page: this.page - 1, orderway: this.companySort, orderby: "company" },
+      });
+      this.contactsObject = await this.contactsService.getContacts();
+    }
+    else
+    {
+      this.companySort = 'ASC'
+      await this.router.navigate(['/contacts/'], {
+        queryParams: { page: this.page - 1, orderby: "company" },
+      });
+      this.contactsObject = await this.contactsService.getContacts();
+    }
   }
 }

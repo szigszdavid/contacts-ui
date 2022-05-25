@@ -24,7 +24,7 @@ export class GetContactByIdComponent implements OnInit {
 
   public async handleDelete(): Promise<void> {
     await this.contactsService.deleteIssue(this.contact.id);
-    this.router.navigate(['/contacts']);
+    this.router.navigate(['/']);
   }
 
 }

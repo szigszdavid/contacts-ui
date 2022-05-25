@@ -1,5 +1,5 @@
 <div class="container">
-  <h2 class="display-2 my-3">Contacts</h2>
+  <h1 class="display-2 my-3">Contacts</h1>
   <div class="d-flex justify-content-between">
     <p>
     <a
@@ -11,7 +11,8 @@
     >
   </p>
   <ngb-pagination
-    [collectionSize]="40"
+    [collectionSize]="contactsObject.numberOfAllContacts"
+    [pageSize]="10"
     [(page)]="page"
     aria-label="Custom pagination"
     (pageChange)="handlePageChange()"
@@ -33,16 +34,55 @@
     </select>
   </div>
   </div>
-  <table class="table table-bordered table-inverse">
+  <table class="table table-striped table-inverse">
+    <thead>
     <tr>
-      <th>FullName</th>
-      <th>Email</th>
-      <th>Phone number</th>
-      <th class="text-right">Company</th>
+      <th (click)="fullNameChangeSort()">FullName
+        <div
+          *ngIf="
+            fullNameSort == 'ASC';
+            then thenBlock;
+            else elseBlock
+          "
+        ></div>
+        <ng-template #thenBlock
+          ><i nz-icon nzType="caret-up" nzTheme="outline"></i></ng-template
+        >
+        <ng-template #elseBlock><i nz-icon nzType="caret-down" nzTheme="outline" ></i></ng-template>
+      </th>
+      <th (click)="emailChangeSort()">Email
+        <div
+          *ngIf="
+            emailSort == 'ASC';
+            then thenBlock;
+            else elseBlock
+          "
+        ></div>
+        <ng-template #thenBlock
+          ><i nz-icon nzType="caret-up" nzTheme="outline" ></i></ng-template
+        >
+        <ng-template #elseBlock><i nz-icon nzType="caret-down" nzTheme="outline"></i></ng-template>
+      </th>
+      <th >Phone number</th>
+      <th (click)="companyChangeSort()">Company
+        <div
+          *ngIf="
+            companySort == 'ASC';
+            then thenBlock;
+            else elseBlock
+          "
+        ></div>
+        <ng-template #thenBlock
+          ><i nz-icon nzType="caret-up" nzTheme="outline" ></i></ng-template
+        >
+        <ng-template #elseBlock><i nz-icon nzType="caret-down" nzTheme="outline"></i></ng-template>
+      </th>
       <th></th>
       <th></th>
     </tr>
-    <tr *ngFor="let contact of contacts">
+  </thead>
+  <tbody>
+    <tr *ngFor="let contact of contactsObject.getAllContactsDTOList">
       <td>
         <div
           *ngIf="
@@ -74,9 +114,11 @@
         <button class="btn btn-danger bg-danger" role="button" (click)="handleDelete(contact.id)" *ngIf="authService.userPrivileges.hasDelete">Delete</button>
       </td>
     </tr>
+  </tbody>
   </table>
   <ngb-pagination
-    [collectionSize]="40"
+    [collectionSize]="contactsObject.numberOfAllContacts"
+    [pageSize]="10"
     [(page)]="page"
     aria-label="Custom pagination"
     (pageChange)="handlePageChange()"
