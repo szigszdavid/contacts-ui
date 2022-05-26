@@ -90,6 +90,7 @@ export class AuthService {
       this.token = loginResponse.access_token;
       this.isLoggedIn = true;
       window.localStorage.setItem('token', this.token);
+      window.localStorage.setItem('refresh_token', loginResponse.refresh_token)
 
       const decodedToken = this.helper.decodeToken(loginResponse.access_token);
 

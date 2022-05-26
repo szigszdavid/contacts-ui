@@ -19,6 +19,7 @@ export class AdminComponent implements OnInit {
   fullNameSort = 'ASC'
   emailSort = "ASC"
   companySort = "ASC"
+  pageSize = 10;
 
   @Input()
   inputData: string = '';
@@ -28,7 +29,7 @@ export class AdminComponent implements OnInit {
   async setValue(value: string) {
     this.inputData = value;
     await this.router.navigate(['/contacts/'], {
-      queryParams: { page: this.page - 1, name: this.inputData },
+      queryParams: { page: this.page - 1, name: this.inputData},
     });
     this.contactsObject = await this.contactsService.getSearchResultForNames();
     
@@ -51,8 +52,17 @@ export class AdminComponent implements OnInit {
     private router: Router,
     public authService: AuthService,
     
-  ) {
+  ) {}
+
+  async changeContactsByPage(size : number)
+  {
+    console.log("Change");
     
+    await this.router.navigate(['/contacts/'], {
+      queryParams: { page: this.page - 1, contactsByPage : size},
+    });
+    this.contactsObject = await this.contactsService.getContacts();
+    this.pageSize = this.contactsObject.contactsPerPage;
   }
 
   async ngOnInit(): Promise<void> {
@@ -100,7 +110,7 @@ export class AdminComponent implements OnInit {
     {
       this.fullNameSort = 'desc'
       await this.router.navigate(['/contacts/'], {
-        queryParams: { page: this.page - 1, orderway: this.fullNameSort },
+        queryParams: { page: this.page - 1, orderway: this.fullNameSort, name: this.inputData, companyId: this.companyInputData },
       });
       this.contactsObject = await this.contactsService.getContacts();
     }

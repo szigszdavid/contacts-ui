@@ -2,131 +2,166 @@
   <h1 class="display-2 my-3">Contacts</h1>
   <div class="d-flex justify-content-between">
     <p>
-    <a
-      class="btn btn-primary"
-      routerLink="/contacts/add"
-      role="button"
-      *ngIf="authService.userPrivileges.hasCreate"
-      >New contact</a
+      <a
+        class="btn btn-primary"
+        routerLink="/contacts/add"
+        role="button"
+        *ngIf="authService.userPrivileges.hasCreate"
+        >New contact</a
+      >
+    </p>
+    <ngb-pagination
+      [collectionSize]="contactsObject.numberOfAllContacts"
+      [pageSize]="pageSize"
+      [(page)]="page"
+      aria-label="Custom pagination"
+      (pageChange)="handlePageChange()"
+      class="d-flex justify-content-center"
     >
-  </p>
-  <ngb-pagination
-    [collectionSize]="contactsObject.numberOfAllContacts"
-    [pageSize]="10"
-    [(page)]="page"
-    aria-label="Custom pagination"
-    (pageChange)="handlePageChange()"
-    class="d-flex justify-content-center"
-  >
-    <ng-template ngbPaginationPrevious>Prev</ng-template>
-    <ng-template ngbPaginationNext>Next</ng-template>
-    <ng-template ngbPaginationNumber let-p>{{ getPageSymbol(p) }}</ng-template>
-  </ngb-pagination>
-  <div>
-    <input  [(ngModel)]="inputData" type="text" class="form-control" placeholder="Search by username" (ngModelChange)="setValue($event)" >
-  </div>
-  <div>
-    <select id="companySelect" [(ngModel)]="companyInputData" class="form-control" (ngModelChange)="searchCompany($event)">
-            <option value="0">All</option>
-            <option value="1">Company #1</option>
-            <option value="2">Company #2</option>
-            <option value="3">Company #3</option>
-    </select>
-  </div>
+      <ng-template ngbPaginationPrevious>Prev</ng-template>
+      <ng-template ngbPaginationNext>Next</ng-template>
+      <ng-template ngbPaginationNumber let-p>{{
+        getPageSymbol(p)
+      }}</ng-template>
+    </ngb-pagination>
+    <div>
+      <input
+        [(ngModel)]="inputData"
+        type="text"
+        class="form-control"
+        placeholder="Search by fullname"
+        (ngModelChange)="setValue($event)"
+      />
+    </div>
+    <div>
+      <label for="companySearch">Search by company</label>
+      <select
+        id="companySelect"
+        name="companySearch"
+        [(ngModel)]="companyInputData"
+        class="form-control"
+        (ngModelChange)="searchCompany($event)"
+      >
+        <option value="0">All</option>
+        <option value="1">Company #1</option>
+        <option value="2">Company #2</option>
+        <option value="3">Company #3</option>
+      </select>
+    </div>
   </div>
   <table class="table table-striped table-inverse">
     <thead>
-    <tr>
-      <th (click)="fullNameChangeSort()">FullName
-        <div
-          *ngIf="
-            fullNameSort == 'ASC';
-            then thenBlock;
-            else elseBlock
-          "
-        ></div>
-        <ng-template #thenBlock
-          ><i nz-icon nzType="caret-up" nzTheme="outline"></i></ng-template
-        >
-        <ng-template #elseBlock><i nz-icon nzType="caret-down" nzTheme="outline" ></i></ng-template>
-      </th>
-      <th (click)="emailChangeSort()">Email
-        <div
-          *ngIf="
-            emailSort == 'ASC';
-            then thenBlock;
-            else elseBlock
-          "
-        ></div>
-        <ng-template #thenBlock
-          ><i nz-icon nzType="caret-up" nzTheme="outline" ></i></ng-template
-        >
-        <ng-template #elseBlock><i nz-icon nzType="caret-down" nzTheme="outline"></i></ng-template>
-      </th>
-      <th >Phone number</th>
-      <th (click)="companyChangeSort()">Company
-        <div
-          *ngIf="
-            companySort == 'ASC';
-            then thenBlock;
-            else elseBlock
-          "
-        ></div>
-        <ng-template #thenBlock
-          ><i nz-icon nzType="caret-up" nzTheme="outline" ></i></ng-template
-        >
-        <ng-template #elseBlock><i nz-icon nzType="caret-down" nzTheme="outline"></i></ng-template>
-      </th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let contact of contactsObject.getAllContactsDTOList">
-      <td>
-        <div
-          *ngIf="
-            authService.userPrivileges.hasList;
-            then thenBlock;
-            else elseBlock
-          "
-        ></div>
-        <ng-template #thenBlock
-          ><a [routerLink]="['/contacts', contact.id]">{{
-            contact.fullName
-          }}</a></ng-template
-        >
-        <ng-template #elseBlock>{{ contact.fullName }}</ng-template>
-      </td>
-      <td>
-        {{ contact.emailAddress }}
-      </td>
-      <td>
-        {{ contact.phoneNumber }}
-      </td>
-      <td class="text-right">
-        {{ contact.company.name }}
-      </td>
-      <td>
-        <button role="button" class="btn btn-warning bg-warning" [routerLink]="['/contacts', contact.id, 'edit']" role="button" *ngIf="authService.userPrivileges.hasModify" >Edit</button>
-      </td>
-      <td>
-        <button class="btn btn-danger bg-danger" role="button" (click)="handleDelete(contact.id)" *ngIf="authService.userPrivileges.hasDelete">Delete</button>
-      </td>
-    </tr>
-  </tbody>
+      <tr>
+        <th (click)="fullNameChangeSort()">
+          FullName
+          <div
+            *ngIf="fullNameSort == 'ASC'; then thenBlock; else elseBlock"
+          ></div>
+          <ng-template #thenBlock
+            ><i nz-icon nzType="caret-up" nzTheme="outline"></i
+          ></ng-template>
+          <ng-template #elseBlock
+            ><i nz-icon nzType="caret-down" nzTheme="outline"></i
+          ></ng-template>
+        </th>
+        <th (click)="emailChangeSort()">
+          Email
+          <div *ngIf="emailSort == 'ASC'; then thenBlock; else elseBlock"></div>
+          <ng-template #thenBlock
+            ><i nz-icon nzType="caret-up" nzTheme="outline"></i
+          ></ng-template>
+          <ng-template #elseBlock
+            ><i nz-icon nzType="caret-down" nzTheme="outline"></i
+          ></ng-template>
+        </th>
+        <th>Phone number</th>
+        <th (click)="companyChangeSort()">
+          Company
+          <div
+            *ngIf="companySort == 'ASC'; then thenBlock; else elseBlock"
+          ></div>
+          <ng-template #thenBlock
+            ><i nz-icon nzType="caret-up" nzTheme="outline"></i
+          ></ng-template>
+          <ng-template #elseBlock
+            ><i nz-icon nzType="caret-down" nzTheme="outline"></i
+          ></ng-template>
+        </th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let contact of contactsObject.getAllContactsDTOList">
+        <td>
+          <div
+            *ngIf="
+              authService.userPrivileges.hasList;
+              then thenBlock;
+              else elseBlock
+            "
+          ></div>
+          <ng-template #thenBlock
+            ><a [routerLink]="['/contacts', contact.id]">{{
+              contact.fullName
+            }}</a></ng-template
+          >
+          <ng-template #elseBlock>{{ contact.fullName }}</ng-template>
+        </td>
+        <td>
+          {{ contact.emailAddress }}
+        </td>
+        <td>
+          {{ contact.phoneNumber }}
+        </td>
+        <td class="text-right">
+          {{ contact.company.name }}
+        </td>
+        <td>
+          <button
+            role="button"
+            class="btn btn-warning bg-warning"
+            [routerLink]="['/contacts', contact.id, 'edit']"
+            role="button"
+            *ngIf="authService.userPrivileges.hasModify"
+          >
+            Edit
+          </button>
+        </td>
+        <td>
+          <button
+            class="btn btn-danger bg-danger"
+            role="button"
+            (click)="handleDelete(contact.id)"
+            *ngIf="authService.userPrivileges.hasDelete"
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
   </table>
-  <ngb-pagination
-    [collectionSize]="contactsObject.numberOfAllContacts"
-    [pageSize]="10"
-    [(page)]="page"
-    aria-label="Custom pagination"
-    (pageChange)="handlePageChange()"
-    class="d-flex justify-content-center"
-  >
-    <ng-template ngbPaginationPrevious>Prev</ng-template>
-    <ng-template ngbPaginationNext>Next</ng-template>
-    <ng-template ngbPaginationNumber let-p>{{ getPageSymbol(p) }}</ng-template>
-  </ngb-pagination>
+  <div >
+    <ngb-pagination
+      [collectionSize]="contactsObject.numberOfAllContacts"
+      [pageSize]="pageSize"
+      [(page)]="page"
+      aria-label="Custom pagination"
+      (pageChange)="handlePageChange()"
+      class="d-flex justify-content-center"
+    >
+      <ng-template ngbPaginationPrevious>Prev</ng-template>
+      <ng-template ngbPaginationNext>Next</ng-template>
+      <ng-template ngbPaginationNumber let-p>{{
+        getPageSymbol(p)
+      }}</ng-template>
+    </ngb-pagination>
+    <div>
+      <button class="btn btn-primary" role="button" (click)="changeContactsByPage(10)">10</button>
+      <button class="btn btn-primary" (click)="changeContactsByPage(20)">20</button>
+      <button class="btn btn-primary" (click)="changeContactsByPage(30)">30</button>
+    </div>
+  </div>
+
   <hr />
 </div>
